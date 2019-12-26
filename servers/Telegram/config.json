@@ -1,8 +1,9 @@
 {
     "config": {
         "token_telegram": {
-            "value": null,
-            "filled": false
+            "value": "",
+            "filled": false,
+            "type": "str"
         }
     }
 }

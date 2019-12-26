@@ -1,12 +1,14 @@
 {
     "config": {
         "confirmation_string": {
-            "value": null,
-            "filled": false
+            "value": "",
+            "filled": false,
+            "type": "str"
         },
         "token_vk": {
-            "value": null,
-            "filled": false
+            "value": "",
+            "filled": false,
+            "type": "str"
         }
     }
 }

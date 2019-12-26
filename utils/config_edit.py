@@ -2,36 +2,15 @@ import json
 from utils.console_menu import Menu
 
 
-base_structure = {"config": {}}
-
-
-def format_config_by_filename(config_file):
-    with open(config_file, "w") as f:
-        json.dump(base_structure, f)
-    print("Файл отформатирован в соответствии с базовой структурой конфигурации.\n"
-          "Добавьте нужные элементы вручную.")
-
-
 def get_editing_menu_for_config(config_file):
     """
     Принимает путь к файлу конфигурации и возвращает консольное меню для его редактирования.
     """
 
-    def format_config():
-        format_config_by_filename(config_file)
-
     with open(config_file, "a+") as f:
         f.seek(0)
         content = f.read()
-    try:
         config = json.loads(content)["config"]
-    except Exception as e:
-        # Файл пуст или в неверном формате
-        # В этом случае выдаем меню для подтверждения форматирования
-        print("Файл имеет неверную структуру. Форматировать?")
-        menu = Menu(name="Форматирование")
-        menu.add_item("Да, я хочу форматировать файл", function=format_config)
-        return menu
 
     def get_condition():
         for item in config.items():
@@ -44,6 +23,8 @@ def get_editing_menu_for_config(config_file):
     def get_property_editor(name):
         def property_editor():
             config[name]["value"] = input("Введите значение: ")
+            if config[name]["type"] == "int":
+                config[name]["value"] = int(config[name]["value"])
             config[name]["filled"] = True
             structure = {"config": config}
             with open(config_file, "w") as f:
@@ -58,7 +39,7 @@ def get_editing_menu_for_config(config_file):
             return
         for item in config.items():
             item[1]["filled"] = False
-            item[1]["value"] = None
+            item[1]["value"] = 0 if item[1]["type"] == "int" else ""
         structure = {"config": config}
         with open(config_file, "w") as f:
             json.dump(structure, f, indent=4)
