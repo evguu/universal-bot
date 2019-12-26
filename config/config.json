@@ -1,0 +1,24 @@
+{
+    "config": {
+        "bot_username_in_telegram": {
+            "value": null,
+            "filled": false
+        },
+        "errors_chat_id": {
+            "value": null,
+            "filled": false
+        },
+        "feedback_chat_id": {
+            "value": null,
+            "filled": false
+        },
+        "owner_id": {
+            "value": null,
+            "filled": false
+        },
+        "time_offset": {
+            "value": null,
+            "filled": false
+        }
+    }
+}
