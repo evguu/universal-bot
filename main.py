@@ -5,6 +5,7 @@ from servers.Telegram.server import server as telegram_server
 from servers.Telegram import config as telegram_config
 from servers.VK.server import server as vk_server
 from servers.VK import config as VK_config
+from apps import init
 
 app = Flask(__name__)
 sslify = SSLify(app)
