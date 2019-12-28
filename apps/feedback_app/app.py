@@ -1,7 +1,8 @@
-from utils.hookers import HookerArgData, Hooker
+from utils.hookers import HookerArgData
 from utils.user import User
 from config import config
 from apps.apps_router import command_route
+from utils.hooker_decorator import multipart_input
 
 
 def send_feedback(user, text):
@@ -16,21 +17,12 @@ def send_feedback(user, text):
                args=["req", "args"],
                help_text="Отправить сообщение разработчику. Флудеры будут наказаны!")
 def execute(req, args):
+
+    args = " ".join(args)
+
+    @multipart_input(req, args,
+                     HookerArgData(lambda x: True,
+                                   "Введите сообщение."))
     def hooker_done(msg):
         send_feedback(req.user, msg)
         return "Сообщение отправлено администратору."
-
-    def arg1_validator(x):
-        return len(x)
-
-    hooker = Hooker(req.user, hooker_done,
-                    HookerArgData(arg1_validator,
-                                  "Введите сообщение."))
-    if len(args):
-        try:
-            hooker_response = hooker.arg_read(" ".join(args), message_id=req.message_id, presend=True)
-        except AttributeError:
-            hooker_response = hooker.arg_read(" ".join(args), presend=True)
-        if not hooker_response:
-            return
-    hooker.init(req.message_id)

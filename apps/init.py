@@ -6,3 +6,4 @@ from apps.schedule_app import app
 from apps.start_app import app
 from apps.switch_app import app
 from apps.zachot_app import app
+from apps.sudoku_app import app

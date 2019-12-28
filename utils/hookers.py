@@ -65,6 +65,10 @@ class Hooker:
 
     def init(self, message_id=None):
         if len(self.func_args) != 0:
+
+            if isinstance(self.func_args[0], HookerArgPathway):
+                self.func_args[0] = self.func_args[0].choose_path(self.received_args)
+
             if isinstance(self.user.server, KeyboardMixin):
                 self.user.server.set_options(self.user, self.func_args[0].options)
             self.user.server.send_message(self.user, self.func_args[0].request_message,
@@ -83,6 +87,9 @@ class Hooker:
         :param presend: Посылается ли данный параметр до инициализации хукера
         :return: Возвращает валидность сообщения если presend == True
         """
+
+        if isinstance(self.func_args[0], HookerArgPathway):
+            self.func_args[0] = self.func_args[0].choose_path(self.received_args)
 
         if message == "--Отмена--":
             self.user.server.send_message(self.user, "Исполнение команды отменено.", reply_to_message_id=message_id)

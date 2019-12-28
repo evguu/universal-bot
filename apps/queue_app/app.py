@@ -3,6 +3,7 @@ import pickle
 import random
 from apps.queue_app import config
 from apps.apps_router import command_route
+from utils.hooker_decorator import multipart_input
 
 users_972304 = [
     ['А. Крепец', 1],
@@ -90,11 +91,13 @@ def get_user(subgroup, name):
                args=["req", "args"],
                help_text="Узнать свой номер в очереди.")
 def execute(req, args):
-    def hooker_done(subgroup, name):
-        return get_user(subgroup, name)
+
+    if len(args) > 1:
+        args = [args[0], " ".join(args[1:])]
 
     def arg1_validator(x):
         return x in "12"
+
     subgroup_pathway = HookerArgPathway([
         (
             HookerArgData(lambda x: True,
@@ -111,28 +114,14 @@ def execute(req, args):
             lambda x: x[-1] == "2"
         )
     ])
-    print(users)
-    hooker = Hooker(req.user, hooker_done,
-                    HookerArgData(arg1_validator,
-                                  "Ваша подгруппа?",
-                                  options=[["1"], ["2"]]),
-                    subgroup_pathway)
-    if len(args):
-        try:
-            hooker_response = hooker.arg_read(args[0], message_id=req.message_id, presend=True)
-        except AttributeError:
-            hooker_response = hooker.arg_read(args[0], presend=True)
-        args.pop(0)
-        if not hooker_response:
-            return
-    if len(args):
-        try:
-            hooker_response = hooker.arg_read(" ".join(args), message_id=req.message_id, presend=True)
-        except AttributeError:
-            hooker_response = hooker.arg_read(" ".join(args), presend=True)
-        if not hooker_response:
-            return
-    hooker.init(getattr(req, "message_id", None))
+
+    @multipart_input(req, args,
+                     HookerArgData(arg1_validator,
+                                   "Ваша подгруппа?",
+                                   options=[["1"], ["2"]]),
+                     subgroup_pathway)
+    def hooker_done(subgroup, name):
+        return get_user(subgroup, name)
 
 
 def get_972304_list():

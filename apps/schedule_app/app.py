@@ -1,8 +1,9 @@
 import datetime
 from config import config
 import requests
-from utils.hookers import Hooker, HookerArgData
+from utils.hookers import HookerArgData
 from apps.apps_router import command_route
+from utils.hooker_decorator import multipart_input
 
 
 def is_valid_group_number(group: str):
@@ -119,6 +120,23 @@ def get_schedule(group, mode=OUTPUT_MODE_TODAY_FULL, subgroup=0):
                args=["req", "args"],
                help_text="Узнать расписание группы.")
 def execute(req, args):
+
+    def arg1_validator(x):
+        return is_valid_group_number(x)
+
+    def arg2_validator(x):
+        return x in ("сегодня", "сейчас", "осталось", "завтра")
+
+    @multipart_input(req, args,
+                     HookerArgData(arg1_validator,
+                                   "Введите номер группы.",
+                                   options=[["972304"]]),
+                     HookerArgData(arg2_validator,
+                                   "Выберите режим.",
+                                   options=[["сегодня"],
+                                            ["сейчас"],
+                                            ["осталось"],
+                                            ["завтра"]]))
     def hooker_done(group, mode):
         if mode == "сегодня":
             return get_schedule(group, OUTPUT_MODE_TODAY_FULL)
@@ -130,30 +148,3 @@ def execute(req, args):
             return get_schedule(group, OUTPUT_MODE_TOMORROW)
         else:
             return "Некорректный запрос."
-
-    def arg1_validator(x):
-        return is_valid_group_number(x)
-
-    def arg2_validator(x):
-        return x in ("сегодня", "сейчас", "осталось", "завтра")
-
-    hooker = Hooker(req.user, hooker_done,
-                    HookerArgData(arg1_validator,
-                                  "Введите номер группы.",
-                                  options=[["972304"]]),
-                    HookerArgData(arg2_validator,
-                                  "Выберите режим.",
-                                  options=[["сегодня"],
-                                           ["сейчас"],
-                                           ["осталось"],
-                                           ["завтра"]]))
-    if len(args):
-        for arg in args:
-            try:
-                hooker_response = hooker.arg_read(arg, message_id=req.message_id, presend=True)
-            except AttributeError:
-                hooker_response = hooker.arg_read(arg, presend=True)
-            if not hooker_response:
-                return
-
-    hooker.init(req.message_id)
