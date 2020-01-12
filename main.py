@@ -1,11 +1,11 @@
 from flask import Flask
 from flask import request
 from flask_sslify import SSLify
-from servers.Telegram.server import server as telegram_server
+
 from servers.Telegram import config as telegram_config
-from servers.VK.server import server as vk_server
+from servers.Telegram.server import server as telegram_server
 from servers.VK import config as VK_config
-from apps import init
+from servers.VK.server import server as vk_server
 
 app = Flask(__name__)
 sslify = SSLify(app)

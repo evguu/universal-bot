@@ -1,9 +1,15 @@
-from apps.btc_app import app
-from apps.feedback_app import app
-from apps.help_app import app
-from apps.queue_app import app
-from apps.schedule_app import app
-from apps.start_app import app
-from apps.switch_app import app
-from apps.zachot_app import app
-from apps.sudoku_app import app
+def init_apps():
+    import apps.btc_app.app
+    import apps.feedback_app.app
+    import apps.help_app.app
+    import apps.perm_app.app
+    import apps.queue_app.app
+    import apps.schedule_app.app
+    import apps.start_app.app
+    import apps.sudoku_app.app
+    import apps.wait_app.app
+    import apps.zachot_app.app
+    import apps.crash_app.app
+    import apps.ban_app.app
+
+    print("Инициализация приложений завершена.")

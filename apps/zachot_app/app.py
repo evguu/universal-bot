@@ -1,5 +1,6 @@
-from apps.apps_router import command_route
 import random
+
+from apps.apps_router import command_route
 
 options = [
     "Отдай 2 гривнi хранителю и сдашь зачет.",
@@ -13,5 +14,5 @@ options = [
 @command_route(commands=["/zachot", "зачет"],
                args=["server", "req"],
                help_text="Узнать тайные техники сдачи зачетов.")
-def execute(server, req):
+def _(server, req):
     server.send_message(req.user, random.choice(options))

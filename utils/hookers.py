@@ -1,4 +1,4 @@
-from utils.mixins import KeyboardMixin
+from utils.keyboard_implementer import KeyboardImplementer
 
 
 class HookerArgData:
@@ -6,9 +6,12 @@ class HookerArgData:
     Совокупность данных, необходимых для запроса аргумента.
 
     Включает в себя подсказку для пользователя и валидатор введенного аргумента.
+    Используйте флаг <greedy>, если аргумент должен забрать в себя оставшуюся часть сообщения польъзователя.
+    Если этот флаг установлен у нескольких аргументов, первый получит все, а остальные ничего либо ошибку.
+    Не пробовал и вам не советую.
     """
 
-    def __init__(self, validator, request_message, options=None):
+    def __init__(self, validator, request_message, options=None, greedy=False):
         """
 
         :param validator: Функция, проверяющая аргумент на корректность.
@@ -17,6 +20,7 @@ class HookerArgData:
         self.validator = validator
         self.request_message = request_message
         self.options = options
+        self.greedy = greedy
 
 
 class HookerArgPathway:
@@ -61,7 +65,7 @@ class Hooker:
         self.func = func
         self.func_args = list(func_args)
         self.received_args = []
-        Hooker.hookers[str(user)] = self
+        Hooker.hookers[user.id] = self
 
     def init(self, message_id=None):
         if len(self.func_args) != 0:
@@ -69,11 +73,11 @@ class Hooker:
             if isinstance(self.func_args[0], HookerArgPathway):
                 self.func_args[0] = self.func_args[0].choose_path(self.received_args)
 
-            if isinstance(self.user.server, KeyboardMixin):
+            if isinstance(self.user.server, KeyboardImplementer):
                 self.user.server.set_options(self.user, self.func_args[0].options)
             self.user.server.send_message(self.user, self.func_args[0].request_message,
                                           reply_to_message_id=message_id)
-            if not isinstance(self.user.server, KeyboardMixin) and self.func_args[0].options:
+            if not isinstance(self.user.server, KeyboardImplementer) and self.func_args[0].options:
                 self.user.server.send_message(self.user,
                                               "Варианты:\n" + "\n".join([i[0] for i in self.func_args[0].options]),
                                               reply_to_message_id=message_id)
@@ -114,7 +118,7 @@ class Hooker:
                                               reply_to_message_id=message_id)
 
                 if presend:
-                    return True
+                    return False
 
             # Еще есть аргументы, просим их.
             else:
@@ -128,11 +132,11 @@ class Hooker:
                     self.func_args[0] = next_arg.choose_path(self.received_args)
                     next_arg = self.func_args[0]
 
-                if isinstance(self.user.server, KeyboardMixin):
+                if isinstance(self.user.server, KeyboardImplementer):
                     self.user.server.set_options(self.user, next_arg.options)
                 self.user.server.send_message(self.user, next_arg.request_message,
                                               reply_to_message_id=message_id)
-                if not isinstance(self.user.server, KeyboardMixin) and self.func_args[0].options:
+                if not isinstance(self.user.server, KeyboardImplementer) and self.func_args[0].options:
                     self.user.server.send_message(self.user,
                                                   "Варианты:\n" + "\n".join([i[0] for i in next_arg.options]),
                                                   reply_to_message_id=message_id)
@@ -154,14 +158,14 @@ class Hooker:
     def get_hooker(cls, user):
 
         # Если нет активного хукера у данного пользователя
-        if str(user) not in cls.hookers.keys():
+        if user.id not in cls.hookers.keys():
             return None
 
-        hooker = cls.hookers[str(user)]
+        hooker = cls.hookers[user.id]
 
         # Если аргументы хукера уже считаны - выход
         if len(hooker.func_args) == 0:
-            cls.hookers.pop(str(user))
+            cls.hookers.pop(user.id)
             return None
 
         return hooker

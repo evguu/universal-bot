@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
+
 from abstract import request
 from logs import log
 
 
-class AbstractServer(ABC):
+class ServerBase(ABC):
     def __init__(self, name: str):
         self.name = name
 
@@ -25,7 +26,7 @@ class AbstractServer(ABC):
         """
         Отослать абстрактный запрос <req> на обработку.
 
-        Аргумент req должен иметь тип AbstractServerRequest.
+        Аргумент req должен иметь тип ServerBaseRequest.
         """
         log.log(user=req.user, message=req.message, mode="RR")
         request.process_request(self, req)

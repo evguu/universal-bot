@@ -1,6 +1,8 @@
-import requests
-from apps.apps_router import command_route
 import random
+
+import requests
+
+from apps.apps_router import command_route
 
 
 def get_btc_to_usd_ratio():
@@ -22,5 +24,5 @@ options = [
 @command_route(commands=["/btc"],
                args=["server", "req"],
                help_text="Узнать курс биткоина к доллару.")
-def execute(server, req):
+def _(server, req):
     server.send_message(req.user, random.choice(options).format(get_btc_to_usd_ratio()))

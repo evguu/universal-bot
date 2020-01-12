@@ -1,6 +1,6 @@
 from apps.apps_router import command_route
-from utils.hookers import HookerArgData, Hooker
 from utils.hooker_decorator import multipart_input
+from utils.hookers import HookerArgData
 
 
 class Board:
@@ -95,16 +95,15 @@ class Board:
 @command_route(commands=["/solve"],
                args=["req", "args"],
                help_text="Решить судоку.")
-def execute(req, args):
-
+def _(req, args):
     def validate(x: str):
         cleaned = "".join([i for i in x if i in "0123456789"])
         if len(cleaned) < 9:
             return False
         return True
 
-    @multipart_input(req, args, *[HookerArgData(validate, "[0 - неизвестно.] Строка " + str(i)) for i in range(1, 10)])
-    def hooker_done(*rows):
+    @multipart_input(req, args, *[HookerArgData(validate, "Введите строку #" + str(i)) for i in range(1, 10)])
+    def _(*rows):
         board = Board([[int(j) for j in i if j in "0123456789"][0:9]
                        for i in rows[0:9]])
         if board.solve_board():

@@ -1,0 +1,6 @@
+CREATE TABLE users (
+    server_user_id VARCHAR(40) PRIMARY KEY NOT NULL,
+    banned_until INT(30),
+    reason VARCHAR(100),
+    permission_level VARCHAR(40)
+);

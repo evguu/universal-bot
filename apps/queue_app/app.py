@@ -1,9 +1,10 @@
-from utils.hookers import Hooker, HookerArgData, HookerArgPathway
 import pickle
 import random
-from apps.queue_app import config
+
 from apps.apps_router import command_route
+from apps.queue_app import config
 from utils.hooker_decorator import multipart_input
+from utils.hookers import HookerArgData, HookerArgPathway
 
 users_972304 = [
     ['А. Крепец', 1],
@@ -90,8 +91,7 @@ def get_user(subgroup, name):
 @command_route(commands=["/random"],
                args=["req", "args"],
                help_text="Узнать свой номер в очереди.")
-def execute(req, args):
-
+def _(req, args):
     if len(args) > 1:
         args = [args[0], " ".join(args[1:])]
 
@@ -120,7 +120,7 @@ def execute(req, args):
                                    "Ваша подгруппа?",
                                    options=[["1"], ["2"]]),
                      subgroup_pathway)
-    def hooker_done(subgroup, name):
+    def _(subgroup, name):
         return get_user(subgroup, name)
 
 
@@ -137,6 +137,6 @@ def get_972304_list():
 @command_route(commands=["/list"],
                args=["server", "req"],
                help_text="Вывести всю очередь.")
-def execute(server, req):
+def _(server, req):
     server.send_message(req.user, "Список студентов группы 972304 в порядке очередности:\n"
                                   "\n" + get_972304_list())

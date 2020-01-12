@@ -1,9 +1,10 @@
+import os
+
+from apps.queue_app.app import get_972304_list
+from apps.queue_app.rerandomize import rerandomize
 from servers.Telegram import webhook_manage
 from utils.config_edit import get_editing_menu_for_config
-from apps.queue_app.rerandomize import rerandomize
-from apps.queue_app.app import get_972304_list
 from utils.console_menu import Menu
-import os
 
 directory = os.path.dirname(__file__)
 

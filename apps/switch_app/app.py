@@ -1,5 +1,6 @@
-from apps.apps_router import command_route
 import random
+
+from apps.apps_router import command_route
 
 options = [
     "Я запрещаю вам switch.",
@@ -18,5 +19,5 @@ options = [
 @command_route(commands=["/laba", "/switch"],
                args=["server", "req"],
                help_text="Спросить у Бутова по поводу сдачи лабораторной.")
-def execute(server, req):
+def _(server, req):
     server.send_message(req.user, random.choice(options))

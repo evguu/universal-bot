@@ -1,4 +1,5 @@
 import json
+
 from utils.console_menu import Menu
 
 
@@ -30,6 +31,7 @@ def get_editing_menu_for_config(config_file):
             with open(config_file, "w") as f:
                 json.dump(structure, f, indent=4)
             print("Значение изменено.")
+
         return property_editor
 
     def reset_config():

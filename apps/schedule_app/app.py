@@ -1,9 +1,11 @@
 import datetime
-from config import config
+
 import requests
-from utils.hookers import HookerArgData
+
 from apps.apps_router import command_route
+from config import config
 from utils.hooker_decorator import multipart_input
+from utils.hookers import HookerArgData
 
 
 def is_valid_group_number(group: str):
@@ -17,7 +19,7 @@ def is_valid_group_number(group: str):
         return False
     if not group.isdigit():
         return False
-    if not 0 < int(group) < 10**6:
+    if not 0 < int(group) < 10 ** 6:
         return False
     return True
 
@@ -68,7 +70,7 @@ def parse_schedule(schedule, output_mode, subgroup):
 
         # Если номер подгруппы совпадает или если пара для всей группы
         if lesson["numSubgroup"] == subgroup or not lesson["numSubgroup"]:
-            result = "Предмет: {}\n"\
+            result = "Предмет: {}\n" \
                      "Тип предмета: {}\n" \
                      "Время: {}\n".format(lesson["subject"],
                                           lesson["lessonType"],
@@ -119,8 +121,7 @@ def get_schedule(group, mode=OUTPUT_MODE_TODAY_FULL, subgroup=0):
 @command_route(commands=["/schedule"],
                args=["req", "args"],
                help_text="Узнать расписание группы.")
-def execute(req, args):
-
+def _(req, args):
     def arg1_validator(x):
         return is_valid_group_number(x)
 
@@ -137,7 +138,7 @@ def execute(req, args):
                                             ["сейчас"],
                                             ["осталось"],
                                             ["завтра"]]))
-    def hooker_done(group, mode):
+    def _(group, mode):
         if mode == "сегодня":
             return get_schedule(group, OUTPUT_MODE_TODAY_FULL)
         elif mode == "сейчас":

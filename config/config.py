@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 directory = os.path.dirname(__file__)
 config_file = os.path.join(directory, "config.json")
 with open(config_file, "a+", encoding="utf8") as f:

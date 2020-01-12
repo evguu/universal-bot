@@ -1,10 +1,11 @@
+import functools
+import os
 import sys
 import traceback
-from logs import config as logs_config
-from config import config as global_config
-import os
 from datetime import datetime
-import functools
+
+from config import config as global_config
+from logs import config as logs_config
 from utils.user import User
 
 logging_server = None
@@ -25,20 +26,21 @@ def error_handling_decorator(func):
                         "Сообщение: {}\n" \
                         "Тип ошибки: {}\n" \
                         "Получено исключение:\n{}\n" \
-                        "Traceback:\n{}".format(abs_req.user, abs_req.message,
+                        "Traceback:\n{}".format(abs_req.user.id, abs_req.message,
                                                 type(sys.exc_info()[1]).__name__, sys.exc_info()[1],
                                                 "\n".join(traceback.format_tb(sys.exc_info()[2])))
             log(abs_req.user, error_log, "ERR")
             self.send_message(abs_req.user, "Упс! Что-то пошло не так...\n"
                                             "Разработчик уже поставлен в известность.")
             if logging_server:
-                logging_server.send_message(User(
-                    logging_server,
-                    global_config.owner_id,
-                    global_config.errors_chat_id),
-                    error_log
-                                                )
+                logging_server.send_message(
+                    User(
+                        logging_server,
+                        global_config.owner_id,
+                        global_config.errors_chat_id),
+                    error_log)
             return False
+
     return process_exception
 
 
@@ -57,7 +59,7 @@ def log(user, message, mode):
                         res += "    {" + str(len(message.split("\n")) - 2 * row_count_max) + "}\n"
                     continue
             if len(line) > 2 * row_length_max:
-                line = line[0:row_length_max] + "{" + str(len(line) - 2 * row_length_max) + "}" +\
+                line = line[0:row_length_max] + "{" + str(len(line) - 2 * row_length_max) + "}" + \
                        line[len(line) - row_length_max:len(line)]
             res += "    " + line + "\n"
     else:
